@@ -82,9 +82,11 @@ Toolchain `leanprover/lean4:v4.33.1`; Mathlib pinned in `lake-manifest.json`.
 ## Related formalisations
 
 Pascal's theorem has been formalised in:
-- **HOL Light** (J. Harrison), for six distinct points on a circle in ℝ²;
-- **Rocq** (N. Magaud and J. Narboux), in synthetic projective geometry, from axioms that include Pappus;
-- **Mizar** (R. Coghetto, 2017), in the real projective plane.
+- **HOL Light** (J. Harrison, `100/pascal.ml`): for a real projective conic given by six not-all-zero coefficients, and in affine and circle forms, over ℝ. The statement assumes that 17 triples of the six vertices are non-collinear.
+- **Mizar** (R. Coghetto, 2017, article `PASCAL`): in the real projective plane, for a conic given by six not-all-zero real coefficients. It assumes a "Pascal configuration" of 17 non-collinearity conditions.
+- **Rocq** (N. Magaud and J. Narboux): in synthetic projective geometry, from axioms that include Pappus.
+
+The development here works over an arbitrary field, including characteristic 2. It assumes only that consecutive vertices are distinct and opposite sides are distinct lines, and its vector form assumes nothing at all. The central identity is classical.
 
 Other Lean 4 developments we are aware of cover circles in ℝ², or rely on an unproved `axiom`, or
 contain `sorry`. At the pinned Mathlib version, Pascal's theorem is not in Mathlib.
