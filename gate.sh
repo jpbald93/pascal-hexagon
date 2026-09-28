@@ -16,7 +16,7 @@
 export PATH="$HOME/.elan/bin:$PATH"
 cd "$(dirname "$0")" || exit 1
 NS="PascalHexagon"
-REQUIRED="pascalDet_standardConic pascalDet_eq_pascalBracket det_verMatrix_eq_neg_pascalBracket pascalDet_eq_zero_of_quadEval apply_eq_quadEval coeffs_ne_zero pascal_quadraticMap pascal_quadraticMap_det pascal_matrix isCollinear_mk_of_triple_product_eq_zero pascal_mk pascal triple_product_eq_zero_of_isCollinear_mk isCollinear_mk_iff isCollinear_iff_det_rep orthogonal_iff_rep mem_line_cross cross_mem_lines eq_cross_of_orthogonal eq_cross_of_orthogonal' orthogonal_cross_iff_isCollinear cross_cross_spec onConic_mk_iff pascal' pascal_of_isCollinear linePair_apply linePair_ne_zero onConic_linePair pappus"
+REQUIRED="pascalDet_standardConic pascalDet_eq_pascalBracket det_verMatrix_eq_neg_pascalBracket pascalDet_eq_zero_of_quadEval apply_eq_quadEval coeffs_ne_zero pascal_quadraticMap pascal_quadraticMap_det pascal_matrix isCollinear_mk_of_triple_product_eq_zero pascal_mk pascal triple_product_eq_zero_of_isCollinear_mk isCollinear_mk_iff isCollinear_iff_det_rep orthogonal_iff_rep mem_line_cross cross_mem_lines eq_cross_of_orthogonal eq_cross_of_orthogonal' orthogonal_cross_iff_isCollinear cross_cross_spec onConic_mk_iff pascal' pascal_of_isCollinear linePair_apply linePair_ne_zero onConic_linePair pappus brianchon exists_common_point_of_isCollinear brianchon_concurrent"
 SOURCES="PascalHexagon/*.lean PascalHexagon.lean"
 [ -e .lake/packages/mathlib ] || lake exe cache get || { echo "FAIL: could not fetch Mathlib cache"; exit 1; }
 if grep -nE "\bsorry\b|\badmit\b|native_decide|\baxiom\b|#eval|\brun_cmd\b|\binitialize\b|\bIO\b|\bdebug\.|\bmacro|\belab|\bsyntax\b|\bnotation\b|\binfix|\bprefix\b|\bpostfix\b|import Lean|open Lean|\bset_option\b" $SOURCES; then

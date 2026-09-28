@@ -5,3 +5,4 @@ import PascalHexagon.Veronese
 import PascalHexagon.Conic
 import PascalHexagon.Projective
 import PascalHexagon.Correctness
+import PascalHexagon.Brianchon
