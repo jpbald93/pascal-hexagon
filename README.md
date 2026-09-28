@@ -27,7 +27,7 @@ lie on a common conic exactly when the 6×6 matrix of their degree-2 monomials i
 | `PascalHexagon.pascal'` | `Correctness.lean` | the same, with the representative-independent predicate `OnConic Q P` |
 | `PascalHexagon.pascal_of_isCollinear` | `Correctness.lean` | the three intersection points given as *any* points `P, R, S` with `P` collinear with `A,B` and with `D,E`, etc.; no reference to `cross` in the conclusion |
 | `PascalHexagon.pappus` | `Correctness.lean` | Pappus's theorem, from the line-pair conic `(a·x)(b·x) = 0` |
-| `PascalHexagon.brianchon`, `brianchon_concurrent` | `Brianchon.lean` | Brianchon's theorem: for six lines tangent to a conic (lying on a nonzero dual conic), the three diagonals are concurrent |
+| `PascalHexagon.brianchon`, `brianchon_concurrent` | `Brianchon.lean` | Brianchon's theorem: for six lines lying on a nonzero dual conic, the three diagonals are collinear as points of the dual plane, i.e. concurrent. Classically, for a nonsingular conic over a field of characteristic not two, the dual conic is the set of tangent lines |
 | `PascalHexagon.pascal_quadraticMap` | `Conic.lean` | vector form over an integral domain: six vectors on a nonzero quadratic map ⇒ the three Pascal points have zero triple product |
 | `PascalHexagon.pascal_matrix` | `Conic.lean` | symmetric-matrix form `vᵀMv = 0`, characteristic ≠ 2 |
 | `PascalHexagon.det_verMatrix_eq_neg_pascalBracket` | `Veronese.lean` | `det(Veronese matrix) = −[bracket polynomial]` over any commutative ring |
