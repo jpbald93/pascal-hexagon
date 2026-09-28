@@ -4,3 +4,4 @@ import PascalHexagon.Bracket
 import PascalHexagon.Veronese
 import PascalHexagon.Conic
 import PascalHexagon.Projective
+import PascalHexagon.Correctness

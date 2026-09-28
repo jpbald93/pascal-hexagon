@@ -255,3 +255,90 @@ code/check_pascal.py               numerical check
 Build with `lake build`. Build modules one at a time: the three `ring` modules each peak at about
 2.6 GB. When I built `Bracket` together with the full `Mathlib` import (an earlier attempt), the
 4 GB cgroup OOM-killer fired. Minimal imports avoid this.
+
+---
+
+## 7. Journal additions
+
+New file `PascalHexagon/Correctness.lean`. It imports only `PascalHexagon.Projective` and is
+imported by `PascalHexagon.lean`. No existing module was changed, and everything is sorry-free.
+It checks that the formal statement of `PascalHexagon.pascal` (Projective.lean:92) means what the
+paper says. Incidence of a point `P` and a line `L` (a dual point) is Mathlib's
+`P.orthogonal L`, i.e. `P.rep ⬝ᵥ L.rep = 0`.
+
+**Collinearity ⇔ triple product (item 4, converse).**
+- `Correctness.lean:34` `triple_product_eq_zero_of_isCollinear_mk`: `IsCollinear {mk u, mk v, mk w} → u ⬝ᵥ v ⨯₃ w = 0`
+- `Correctness.lean:64` `isCollinear_mk_iff`: `IsCollinear {mk u, mk v, mk w} ↔ u ⬝ᵥ v ⨯₃ w = 0`
+- `Correctness.lean:72` `isCollinear_iff_det_rep`: `IsCollinear {A, B, C} ↔ det ![A.rep, B.rep, C.rep] = 0`
+
+**Lines and intersections (item 1).**
+- `Correctness.lean:82` `orthogonal_iff_rep`: `P.orthogonal L ↔ P.rep ⬝ᵥ L.rep = 0`
+- `Correctness.lean:91` `mem_line_cross`: `A ≠ B → A.orthogonal (cross A B) ∧ B.orthogonal (cross A B)`
+- `Correctness.lean:96` `cross_mem_lines`: `L ≠ M → (cross L M).orthogonal L ∧ (cross L M).orthogonal M`
+- `Correctness.lean:102` `eq_cross_of_orthogonal`: uniqueness of the meet. If `L ≠ M`, `P ⊥ L` and `P ⊥ M`, then `P = cross L M`.
+  The proof uses `cross_cross_eq_smul_sub_smul'`.
+- `Correctness.lean:112` `eq_cross_of_orthogonal'`: uniqueness of the join. A line through `A ≠ B` is `cross A B`.
+- `Correctness.lean:117` `orthogonal_cross_iff_isCollinear`: `A ≠ B → (P.orthogonal (cross A B) ↔ IsCollinear {A, B, P})`
+- `Correctness.lean:128` `cross_cross_spec`: for `A ≠ B`, `D ≠ E` and `cross A B ≠ cross D E`, the point
+  `cross (cross A B) (cross D E)` is collinear with `A, B` and with `D, E`, and every `X` with both
+  properties equals it. This is the lemma that lets the paper say the three points in `pascal` are
+  **exactly** AB∩DE, BC∩EF and CD∩FA.
+- `Correctness.lean:168` `pascal_of_isCollinear`: Pascal where the three points `P, R, S` are arbitrary
+  points, given only by the hypotheses `IsCollinear {A,B,P}`, `IsCollinear {D,E,P}`, …,
+  `IsCollinear {F,A,S}`. The conclusion is `IsCollinear {P, R, S}`. The statement does not
+  mention `cross` in its conclusion or in the hypotheses on `P, R, S`. `cross` still appears in
+  the side conditions `cross A B ≠ cross D E` etc., meaning "opposite sides are distinct lines".
+
+**Representative independence (item 2).**
+- `Correctness.lean:142` `def OnConic (Q : QuadraticForm K (Fin 3 → K)) (P : ℙ K (Fin 3 → K)) : Prop := Q P.rep = 0`
+- `Correctness.lean:146` `onConic_mk_iff`: `v ≠ 0 → (OnConic Q (mk K v hv) ↔ Q v = 0)`. The proof uses `Q (a • v) = (a*a) • Q v` with `a` a unit.
+  The task's `↔` is stated in the opposite order; the content is the same.
+- `Correctness.lean:155` `pascal'`: `pascal` with `OnConic` hypotheses. The proof is literally `pascal …`, since `OnConic` unfolds by definition.
+
+**Pappus (item 3).**
+- `Correctness.lean:189` `def dotLeft a : (Fin 3 → K) →ₗ[K] K` (`v ↦ a ⬝ᵥ v`)
+- `Correctness.lean:196` `def linePair a b := QuadraticMap.linMulLin (dotLeft a) (dotLeft b)`
+- `Correctness.lean:200` `linePair_apply`: `linePair a b x = (a ⬝ᵥ x) * (b ⬝ᵥ x)`
+- `Correctness.lean:204` `linePair_ne_zero`: `a ≠ 0 → b ≠ 0 → linePair a b ≠ 0`. The proof builds an explicit witness `z` with
+  `a⬝z ≠ 0` and `b⬝z ≠ 0`, taking `z` to be `x`, `y` or `x + y`.
+- `Correctness.lean:225` `onConic_linePair`: a point on line `a` or on line `b` lies on the conic `linePair a.rep b.rep`.
+- `Correctness.lean:236` `pappus`: if `A, C, E ⊥ a` and `B, D, F ⊥ b`, with consecutive vertices distinct
+  and opposite sides distinct, then the three Pascal points are collinear. The lines `a` and `b` may
+  coincide (a double line); the statement stays true.
+
+**Nothing was dropped or weakened.** Items 1–4, including uniqueness and the converse, are all proved.
+
+### Gate
+`gate.sh` is adapted from `primitive-root-families`, with `NS=PascalHexagon` and
+`SOURCES=PascalHexagon/*.lean PascalHexagon.lean`. REQUIRED lists all 29 public theorems; they are
+listed below, and every one of them is checked by `#print axioms`. The forbidden-token filter is
+unchanged: no `sorry`, `admit`, `native_decide`, `axiom`, `#eval`, `set_option`, `macro`, `notation`, etc.
+The gate was run once, as a full `lake build` (≈21 s, because the build cache was warm):
+```
+PASS (29 theorems, standard axioms only)
+```
+REQUIRED: pascalDet_standardConic pascalDet_eq_pascalBracket det_verMatrix_eq_neg_pascalBracket
+pascalDet_eq_zero_of_quadEval apply_eq_quadEval coeffs_ne_zero pascal_quadraticMap
+pascal_quadraticMap_det pascal_matrix isCollinear_mk_of_triple_product_eq_zero pascal_mk pascal
+triple_product_eq_zero_of_isCollinear_mk isCollinear_mk_iff isCollinear_iff_det_rep
+orthogonal_iff_rep mem_line_cross cross_mem_lines eq_cross_of_orthogonal eq_cross_of_orthogonal'
+orthogonal_cross_iff_isCollinear cross_cross_spec onConic_mk_iff pascal' pascal_of_isCollinear
+linePair_apply linePair_ne_zero onConic_linePair pappus. Every one depends on
+`[propext, Classical.choice, Quot.sound]`.
+
+### Tamper tests (`tests/tamper.sh`)
+Each test builds a scratch copy with one planted defect, all in `Correctness.lean`. The scratch copies
+reuse the prebuilt `.lake/build` so the 90 s `ring` modules are not rebuilt; lake re-checks them by hash.
+```
+ok    sorry     rejected: FAIL: forbidden token
+ok    ax2line   rejected: FAIL: forbidden token
+ok    evalfake  rejected: FAIL: forbidden token
+ok    macro     rejected: FAIL: forbidden token
+ok    falsehyp  rejected: FAIL: build          (Pappus with E moved from line a to line b)
+ok    wrap      rejected: FAIL: nonstandard axioms: PascalHexagon.zz_extra_axiom_with_a_long_name_for_the_negative_gate_test
+ALL TAMPERING TESTS REJECTED
+```
+The suite ran **twice**. On the first run, the planted `wrap` defect failed to elaborate
+(`have := @pappus_orig` could not infer universe levels), so that copy failed at "build" instead
+of reaching the axiom parser. The other five tests passed on that run. Changing it to
+`@pappus_orig.{0}` fixed the planted defect. The second run, shown above, rejected all six (≈36 s).
